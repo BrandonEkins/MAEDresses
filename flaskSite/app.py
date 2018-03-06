@@ -1,5 +1,5 @@
 #/bin/python
-from flask import Flask, jsonify, request, abort, render_template
+from flask import Flask, jsonify, request, abort, render_template,send_from_directory
 import MySQLdb
 def queryDB(nQuery):
     db = MySQLdb.connect(host="localhost",
@@ -17,6 +17,14 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 task_id = ''
+
+@app.route('/static/<path:path>')
+def controller(path):
+    return send_from_directory('js', path)
+
+@app.route('/static/<path:path>')
+def style(path):
+    return send_from_directory('css', path)
 ##REST for Address table
 
 @app.route('/api/address', methods=['GET'])
@@ -39,7 +47,6 @@ def put_address():
 def delete_task():
     result = queryDB('DELETE FROM Address WHERE AddressID = '+ task_id +';')
     return jsonify(result), 201
-
 
 
 
