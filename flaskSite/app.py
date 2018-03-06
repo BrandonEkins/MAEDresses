@@ -1,28 +1,25 @@
 #/bin/python
 from flask import Flask, jsonify
-
+import MySQLdb
+def queryDB(nQuery):
+    db = MySQLdb.connect(host="localhost",
+                        user="root",
+                        passwd="",
+                        db="MAEDresses")
+    cur = db.cursor()
+    cur.execute(nQuery)
+    result = cur.fetchall()
+    db.close()
+    return result
 app = Flask(__name__)
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
+
 @app.route('/')
 def index():
     return "Hello, World!"
 
 @app.route('/api/address', methods=['GET'])
 def get_address():
-    return jsonify({'tasks': tasks})
+    return jsonify(queryDB("SELECT * FROM Address"))
 
 @app.route('/api/cart', methods=['GET'])
 def get_cart():
