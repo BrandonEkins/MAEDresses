@@ -48,7 +48,5 @@ def delete_task():
     result = queryDB('DELETE FROM Address WHERE AddressID = '+ task_id +';')
     return jsonify(result), 201
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
