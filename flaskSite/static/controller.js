@@ -57,7 +57,8 @@ function delRow(id, type){
     });
 }
 function addRow(type){
-    $( "#dialog" ).dialog();
+    $( "#addDialog" ).dialog();
+    
     $.ajax({
         url: '/api/'+type,
         type: 'POST',
