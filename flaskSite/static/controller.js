@@ -1,14 +1,98 @@
+
+//#region Variables
 indexes = ["",
     "address",
+    "billinginformation",
+    "cart",
+    "cartedproduct",
+    "customer",
+    "neworder",
+    "product",
+    "staff",
+    "wholesaler"
 ]
-addresses = {};
+address = {};
 addressColumns = ["ID", "Street", "City", "aState", "Zip"];
+billinginformation={};
+billinginformationColumns = ["BillingInformationID", "CreditCardNumber", "ExpirationDate", "AddressID"]
+cart = {};
+cartColumns = ["CartID","NumberOfItems","TotalCost","ShippingCost","CustomerID"]
+cartedproduct = {};
+cartedproductColumns = ["CartedProductID","ProductID","CartID"]
+customer = {};
+customerColumns = ["CustomerID","Email","cName","Pass","AddressID","BillingInformationID"]
+neworder = {};
+neworderColumns = ["NewOrderID","CartID","StaffID","OrderDate"]
+product = {};
+productColumns = ["ProductID","ShippingCost","ProductName","Color","Price","WholesalerID"]
+staff = {};
+staffColumns = ["StaffID","StaffName","Email","Wage","sPassword"]
+wholesaler = {};
+wholesalerColumns = ["WholesalerID","Website","WholesalerName","WholesalerPhone","WholesalerLocation"]
+//#endregion
+
 function getstuff() {
     $.ajax({
         url: '/api/address',
         type: 'GET',
         success: function(result) {
-            addresses = result;
+            address = result;
+        }
+    });
+    $.ajax({
+        url: '/api/billinginformation',
+        type: 'GET',
+        success: function(result) {
+            billinginformation = result;
+        }
+    });
+    $.ajax({
+        url: '/api/cart',
+        type: 'GET',
+        success: function(result) {
+            cart = result;
+        }
+    });
+    $.ajax({
+        url: '/api/cartedproduct',
+        type: 'GET',
+        success: function(result) {
+            cartedproduct = result;
+        }
+    });
+    $.ajax({
+        url: '/api/customer',
+        type: 'GET',
+        success: function(result) {
+            customer = result;
+        }
+    });
+    $.ajax({
+        url: '/api/neworder',
+        type: 'GET',
+        success: function(result) {
+            neworder = result;
+        }
+    });
+    $.ajax({
+        url: '/api/product',
+        type: 'GET',
+        success: function(result) {
+            product = result;
+        }
+    });
+    $.ajax({
+        url: '/api/staff',
+        type: 'GET',
+        success: function(result) {
+            staff = result;
+        }
+    });
+    $.ajax({
+        url: '/api/wholesaler',
+        type: 'GET',
+        success: function(result) {
+            wholesaler = result;
         }
     });
 }
@@ -35,7 +119,7 @@ function CreateTableFromJSON(newJson, col, type) {
                 var intext =  i + ", " + type;
                 tabCell.innerHTML = "<button onclick='editRow(" + intext + ")' class='editbtn'>edit</button>"
             } else if (j == col.length - 2) {
-                var intext = i + ", " + type;
+                var intext =  newJson[i][0] + ", " + type;
                 tabCell.innerHTML = "<button onclick='delRow(" + intext + ")'class='delbtn'>delete</button>"
             } else {
                 tabCell.innerHTML = newJson[i][j];
@@ -50,17 +134,18 @@ function CreateTableFromJSON(newJson, col, type) {
 }
 
 function AddressTable() {
-    CreateTableFromJSON(addresses, addressColumns, 1);
+    CreateTableFromJSON(address, addressColumns, 1);
 }
 
 function editRow(id, type) {
     //add modal here
-    
+    $("#editDialog").empty()
     $("#editDialog").append("<form id='editForm'>")
     if(indexes[type] == "address"){
         var t = 0;
-         addresses[id].forEach(element => {
+         address[id].forEach(element => {
             if(t != 0){
+                $("#editForm").append("<label>"+addressColumns[t]+"</label>")
                 $("#editForm").append("<input value='"+element+"'name='"+addressColumns[t]+"'type='text'>")
             }
             t++;
@@ -91,9 +176,8 @@ function putRow(id, type) {
 }
 
 function delRow(id, type) {
-    //add modal here
     $.ajax({
-        url: '/api/' + type + '/' + id,
+        url: '/api/' + indexes[type] + '/' + id,
         type: 'DELETE',
         success: function(result) {
             console.log(result);
@@ -101,21 +185,44 @@ function delRow(id, type) {
     });
 }
 
-
-function addAddress() {
-    $("#addDialog").append("<form id='addForm'><label>Street</label><input name='Street' value='' type='text'><label>City</label><input name='City' value='' type='text'><label>aState</label><input name='aState' value='' type='text'><label>zip</label><input name='Zip' value='' type='text'></form><input type='button' onclick='postAddress()' value='Submit'>");
+function addRow(type){
+    $('#addDialog').empty();
+    $("#addDialog").append("<form id='addForm'>");
+    if(indexes[type] == "address"){
+        addressColumns.forEach(element => {
+        if(element != "ID"){
+            if (element != "Edit"){
+                if (element != "Delete"){
+                    $("#addForm").append("<label>"+element+"</label>");
+                    $("#addForm").append("<input name='"+element+"' value='' type='text'>");
+                }
+            }
+        }
+        })
+        
+    }
+    $("#addDialog").append("<input type='button' onclick='postRow("+type+")' value='Submit'>")
     $("#addDialog").css("visibility", "visible");
     $("#addDialog").dialog();
 }
-function postAddress() {
+
+
+// function addAddress() {
+//     $("#addDialog").append("<form id='addForm'><label>Street</label><input name='Street' value='' type='text'><label>City</label><input name='City' value='' type='text'><label>aState</label><input name='aState' value='' type='text'><label>zip</label><input name='Zip' value='' type='text'></form><input type='button' onclick='postAddress()' value='Submit'>");
+//     $("#addDialog").css("visibility", "visible");
+//     $("#addDialog").dialog();
+// }
+function postRow(type) {
     var newdata = $('#addForm').serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
         return obj;
     }, {});
-    newdata.id = (addresses[addresses.length - 1][0] + 1);
+    if(indexes[type]=="address"){
+        newdata.id = (address[address.length - 1][0] + 1);
+    }
     newdata = JSON.stringify(newdata);
     $.ajax({
-        url: '/api/' + "address",
+        url: '/api/' + indexes[type],
         type: 'POST',
         contentType: "application/json",
         data: newdata,
@@ -123,8 +230,8 @@ function postAddress() {
             console.log(result);
         }
     });
+
     $('#addDialog').dialog('close');
-    $('#addDialog').empty();
+    
 }
 
-//{console.log(JSON.stringify(newdata))}

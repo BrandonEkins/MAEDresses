@@ -27,10 +27,10 @@ def controller(path):
 @app.route('/static/<path:path>')
 def style(path):
     return send_from_directory('css', path)
-##REST for Address table
 
+#region addressApi
 @app.route('/api/address', methods=['GET', 'POST'])
-def api():
+def addressget():
     if request.method == 'GET':
         return jsonify(queryDB("SELECT * FROM Address;"))
     elif request.method == 'POST':
@@ -43,11 +43,35 @@ def api():
 def addressput(task_id):
     if request.method == 'PUT':
         data = request.get_json(force=True)
-        result = queryDB("UPDATE address SET Street='"+data['Street']+"', City='"+data['City']+"', aState='"+data['aState']+"', zip='"+data['Zip']+"' WHERE 'AddressID' = '"+str(task_id)+"';")
+        result = queryDB("UPDATE address SET Street='"+data['Street']+"', City='"+data['City']+"', aState='"+data['aState']+"', Zip='"+data['Zip']+"' WHERE AddressID= "+str(task_id)+";")
         return jsonify(result), 201
+
     elif request.method == 'DELETE':
         result = queryDB("DELETE FROM Address WHERE AddressID = '"+ str(task_id) +"';")
         return jsonify(result), 201
+#endregion
+#region addressApi
+@app.route('/api/billinginformation', methods=['GET', 'POST'])
+def billingget():
+    if request.method == 'GET':
+        return jsonify(queryDB("SELECT * FROM billinginformation;"))
+    elif request.method == 'POST':
+        data = request.get_json(force=True)
+        query = "INSERT INTO billinginformation (`BillingInformationID`,`CreditCardNumber`, `ExpirationDate`, `AddressID`) VALUES ("+str(data['id'])+",'"+ data['CreditCardNumber']+"', '"+ data['ExpirationDate']+"', '"+ data['AddressID']+");"
+        result = queryDB(query)
+        return jsonify(result), 201
+
+@app.route('/api/billinginformation/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def billingput(task_id):
+    if request.method == 'PUT':
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE billinginformation SET Street='"+data['Street']+"', City='"+data['City']+"', aState='"+data['aState']+"', Zip='"+data['Zip']+"' WHERE AddressID= "+str(task_id)+";")
+        return jsonify(result), 201
+
+    elif request.method == 'DELETE':
+        result = queryDB("DELETE FROM billinginformation WHERE AddressID = '"+ str(task_id) +"';")
+        return jsonify(result), 201
+#endregion
 
 if __name__ == '__main__':
     app.run(debug=True)
