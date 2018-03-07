@@ -1,5 +1,8 @@
-addresses = {}
-
+indexes = ["",
+    "address",
+]
+addresses = {};
+addressColumns = ["ID", "Street", "City", "aState", "Zip"];
 function getstuff() {
     $.ajax({
         url: '/api/address',
@@ -12,7 +15,7 @@ function getstuff() {
 getstuff();
 
 function CreateTableFromJSON(newJson, col, type) {
-
+    getstuff();
     // CREATE DYNAMIC TABLE.
     col.push("Delete", "Edit")
     var table = document.createElement("table");
@@ -29,10 +32,10 @@ function CreateTableFromJSON(newJson, col, type) {
         for (var j = 0; j < col.length; j++) {
             var tabCell = tr.insertCell(-1);
             if (j == col.length - 1) {
-                var intext = newJson + ", " + i + " ," + type;
+                var intext =  i + ", " + type;
                 tabCell.innerHTML = "<button onclick='editRow(" + intext + ")' class='editbtn'>edit</button>"
             } else if (j == col.length - 2) {
-                var intext = i + " ," + type;
+                var intext = i + ", " + type;
                 tabCell.innerHTML = "<button onclick='delRow(" + intext + ")'class='delbtn'>delete</button>"
             } else {
                 tabCell.innerHTML = newJson[i][j];
@@ -47,20 +50,44 @@ function CreateTableFromJSON(newJson, col, type) {
 }
 
 function AddressTable() {
-
-    CreateTableFromJSON(addresses, ["ID", "Street", "City", "nState", "Zip"], "Address");
+    CreateTableFromJSON(addresses, addressColumns, 1);
 }
 
-function editRow(newJson, id, type) {
+function editRow(id, type) {
     //add modal here
+    
+    $("#editDialog").append("<form id='editForm'>")
+    if(indexes[type] == "address"){
+        var t = 0;
+         addresses[id].forEach(element => {
+            if(t != 0){
+                $("#editForm").append("<input value='"+element+"'name='"+addressColumns[t]+"'type='text'>")
+            }
+            t++;
+         });
+    }
+    $("#editDialog").append("</form>");
+    $("#editDialog").append("<input type='button' onclick='putRow("+id+","+type+")' value='Submit'>");
+    $("#editDialog").dialog();
+    
+}
+function putRow(id, type) {
+    var newdata = $('#editForm').serializeArray().reduce(function(obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+    }, {});
+    newdata = JSON.stringify(newdata);
     $.ajax({
-        url: '/api/' + type + '/' + id,
+        url: '/api/' + indexes[type] + '/' + id,
         type: 'PUT',
-        data: "",
+        data: newdata,
+        contentType: "application/json",
         success: function(result) {
             console.log(result);
         }
     });
+    $('#editDialog').dialog('close');
+    $('#editDialog').empty();
 }
 
 function delRow(id, type) {
@@ -76,11 +103,10 @@ function delRow(id, type) {
 
 
 function addAddress() {
+    $("#addDialog").append("<form id='addForm'><label>Street</label><input name='Street' value='' type='text'><label>City</label><input name='City' value='' type='text'><label>aState</label><input name='aState' value='' type='text'><label>zip</label><input name='Zip' value='' type='text'></form><input type='button' onclick='postAddress()' value='Submit'>");
     $("#addDialog").css("visibility", "visible");
     $("#addDialog").dialog();
-
 }
-
 function postAddress() {
     var newdata = $('#addForm').serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
@@ -98,6 +124,7 @@ function postAddress() {
         }
     });
     $('#addDialog').dialog('close');
+    $('#addDialog').empty();
 }
 
 //{console.log(JSON.stringify(newdata))}

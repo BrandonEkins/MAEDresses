@@ -1,5 +1,5 @@
 #/bin/python
-from flask import Flask, jsonify, Response, request, abort, render_template,send_from_directory
+from flask import Flask, jsonify, Response, request, abort, render_template, send_from_directory
 import MySQLdb
 def queryDB(nQuery):
     db = MySQLdb.connect(host="localhost",
@@ -7,7 +7,9 @@ def queryDB(nQuery):
                         passwd="",
                         db="MAEDresses")
     cur = db.cursor()
+    print nQuery
     cur.execute(nQuery)
+    db.commit()
     result = cur.fetchall()
     db.close()
     return result
@@ -33,19 +35,18 @@ def api():
         return jsonify(queryDB("SELECT * FROM Address;"))
     elif request.method == 'POST':
         data = request.get_json(force=True)
-        print data
         query = "INSERT INTO address (`AddressID`,`Street`, `City`, `aState`, `Zip`) VALUES ("+str(data['id'])+",'"+ data['Street']+"', '"+ data['City']+"', '"+ data['aState']+"', "+ data['Zip']+");"
-        print query
         result = queryDB(query)
         return jsonify(result), 201
 
-@app.route('/api/address', methods=[ 'PUT', 'DELETE'])
-def addressput():
+@app.route('/api/address/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def addressput(task_id):
     if request.method == 'PUT':
-        result = queryDB("UPDATE address SET Street="+request.json[0]+", City="+request.json[1]+", aState="+request.json[2]+", zip="+request.json[3]+" WHERE AddressID = "+task_id+";")
-        return jsonify(result.json), 201
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE address SET Street='"+data['Street']+"', City='"+data['City']+"', aState='"+data['aState']+"', zip='"+data['Zip']+"' WHERE 'AddressID' = '"+str(task_id)+"';")
+        return jsonify(result), 201
     elif request.method == 'DELETE':
-        result = queryDB('DELETE FROM Address WHERE AddressID = '+ task_id +';')
+        result = queryDB("DELETE FROM Address WHERE AddressID = '"+ str(task_id) +"';")
         return jsonify(result), 201
 
 if __name__ == '__main__':
