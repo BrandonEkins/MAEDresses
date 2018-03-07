@@ -1,12 +1,25 @@
-var value = $.get("/api/address");
+addresses = {}
+
+function getstuff() {
+    $.ajax({
+        url: '/api/address',
+        type: 'GET',
+        success: function(result) {
+            addresses = result;
+        }
+    });
+}
+getstuff();
+
 function CreateTableFromJSON(newJson, col, type) {
+
     // CREATE DYNAMIC TABLE.
-    col.push("Delete","Edit")
+    col.push("Delete", "Edit")
     var table = document.createElement("table");
     // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-    var tr = table.insertRow(-1);                   // TABLE ROW.
+    var tr = table.insertRow(-1); // TABLE ROW.
     for (var i = 0; i < col.length; i++) {
-        var th = document.createElement("th");      // TABLE HEADER.
+        var th = document.createElement("th"); // TABLE HEADER.
         th.innerHTML = col[i];
         tr.appendChild(th);
     }
@@ -15,13 +28,13 @@ function CreateTableFromJSON(newJson, col, type) {
         tr = table.insertRow(-1);
         for (var j = 0; j < col.length; j++) {
             var tabCell = tr.insertCell(-1);
-            if(j == col.length -1){
-                tabCell.innerHTML = "<button onclick='editRow("+newJson,i,type+")' class='editbtn'>edit</button>"
-            }
-            else if(j == col.length -2){
-                tabCell.innerHTML = "<button onclick='delRow("+i, type+")'class='delbtn'>delete</button>"
-            }
-            else{
+            if (j == col.length - 1) {
+                var intext = newJson + ", " + i + " ," + type;
+                tabCell.innerHTML = "<button onclick='editRow(" + intext + ")' class='editbtn'>edit</button>"
+            } else if (j == col.length - 2) {
+                var intext = i + " ," + type;
+                tabCell.innerHTML = "<button onclick='delRow(" + intext + ")'class='delbtn'>delete</button>"
+            } else {
                 tabCell.innerHTML = newJson[i][j];
             }
         }
@@ -32,13 +45,16 @@ function CreateTableFromJSON(newJson, col, type) {
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
 }
+
 function AddressTable() {
-    CreateTableFromJSON(value.responseJSON, ["ID","Street", "City", "nState", "Zip"], "Address");
+
+    CreateTableFromJSON(addresses, ["ID", "Street", "City", "nState", "Zip"], "Address");
 }
-function editRow(newJson,id,type) {
+
+function editRow(newJson, id, type) {
     //add modal here
     $.ajax({
-        url: '/api/'+type+'/'+id,
+        url: '/api/' + type + '/' + id,
         type: 'PUT',
         data: "",
         success: function(result) {
@@ -46,25 +62,42 @@ function editRow(newJson,id,type) {
         }
     });
 }
-function delRow(id, type){
+
+function delRow(id, type) {
     //add modal here
     $.ajax({
-        url: '/api/'+type+'/'+id,
+        url: '/api/' + type + '/' + id,
         type: 'DELETE',
         success: function(result) {
             console.log(result);
         }
     });
 }
-function addRow(type){
-    $( "#addDialog" ).dialog();
-    
+
+
+function addAddress() {
+    $("#addDialog").css("visibility", "visible");
+    $("#addDialog").dialog();
+
+}
+
+function postAddress() {
+    var newdata = $('#addForm').serializeArray().reduce(function(obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+    }, {});
+    newdata.id = (addresses[addresses.length - 1][0] + 1);
+    newdata = JSON.stringify(newdata);
     $.ajax({
-        url: '/api/'+type,
+        url: '/api/' + "address",
         type: 'POST',
-        data: "",
+        contentType: "application/json",
+        data: newdata,
         success: function(result) {
             console.log(result);
         }
-    }); 
+    });
+    $('#addDialog').dialog('close');
 }
+
+//{console.log(JSON.stringify(newdata))}

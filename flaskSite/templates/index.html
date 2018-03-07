@@ -1,13 +1,22 @@
 <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-<link rel="stylesheet" type="text/css"href="/static/styles.css">
+<link rel="stylesheet" type="text/css" href="/static/styles.css">
+
 <body>
     <div id="showData">Loading</div>
     <input type="button" onclick="addAddress()" value="Add Address" />
     <input type="button" onclick="AddressTable()" value="Create Table From JSON" />
 </body>
-<div id="addDialog" title="Add"></div>
+<div id="addDialog" title="Add" style="visibility:hidden">
+    <form id="addForm">
+        <label>Street</label><input name="Street" value="" type="text">
+        <label>City</label><input name="City" value="" type="text">
+        <label>nState</label><input name="aState" value="" type="text">
+        <label>zip</label><input name="Zip" value="" type="text">
+    </form>
+    <input type="button" onclick="postAddress()" value="Submit">
+</div>
 <div id="editDialog" title="Edit"></div>
 <div id="deleteDialog" title="Delete"></div>
 <script src="/static/controller.js"></script>
