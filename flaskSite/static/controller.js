@@ -1,4 +1,3 @@
-
 //#region Variables
 indexes = ["",
     "address",
@@ -11,26 +10,27 @@ indexes = ["",
     "staff",
     "wholesaler"
 ]
-address = {};
-addressColumns = ["ID", "Street", "City", "aState", "Zip"];
-billinginformation={};
-billinginformationColumns = ["BillingInformationID", "CreditCardNumber", "ExpirationDate", "AddressID"]
-cart = {};
-cartColumns = ["CartID","NumberOfItems","TotalCost","ShippingCost","CustomerID"]
-cartedproduct = {};
-cartedproductColumns = ["CartedProductID","ProductID","CartID"]
-customer = {};
-customerColumns = ["CustomerID","Email","cName","Pass","AddressID","BillingInformationID"]
-neworder = {};
-neworderColumns = ["NewOrderID","CartID","StaffID","OrderDate"]
-product = {};
-productColumns = ["ProductID","ShippingCost","ProductName","Color","Price","WholesalerID"]
-staff = {};
-staffColumns = ["StaffID","StaffName","Email","Wage","sPassword"]
-wholesaler = {};
-wholesalerColumns = ["WholesalerID","Website","WholesalerName","WholesalerPhone","WholesalerLocation"]
-//#endregion
 
+address = {};
+addressColumns = ["ID", "Street", "City", "aState", "Zip", "Delete", "Edit"];
+billinginformation = {};
+billinginformationColumns = ["BillingInformationID", "CreditCardNumber", "ExpirationDate", "AddressID", "Delete", "Edit"]
+cart = {};
+cartColumns = ["CartID", "NumberOfItems", "TotalCost", "ShippingCost", "CustomerID", "Delete", "Edit"]
+cartedproduct = {};
+cartedproductColumns = ["CartedProductID", "ProductID", "CartID", "Delete", "Edit"]
+customer = {};
+customerColumns = ["CustomerID", "Email", "cName", "Pass", "AddressID", "BillingInformationID", "Delete", "Edit"]
+neworder = {};
+neworderColumns = ["NewOrderID", "CartID", "StaffID", "OrderDate", "Delete", "Edit"]
+product = {};
+productColumns = ["ProductID", "ShippingCost", "ProductName", "Color", "Price", "WholesalerID", "Delete", "Edit"]
+staff = {};
+staffColumns = ["StaffID", "StaffName", "Email", "Wage", "sPassword", "Delete", "Edit"]
+wholesaler = {};
+wholesalerColumns = ["WholesalerID", "Website", "WholesalerName", "WholesalerPhone", "WholesalerLocation", "Delete", "Edit"]
+    //#endregion
+    //#region getstuff
 function getstuff() {
     $.ajax({
         url: '/api/address',
@@ -97,11 +97,12 @@ function getstuff() {
     });
 }
 getstuff();
-
+//#endregion
+//#region createTables
 function CreateTableFromJSON(newJson, col, type) {
-    getstuff();
+
     // CREATE DYNAMIC TABLE.
-    col.push("Delete", "Edit")
+
     var table = document.createElement("table");
     // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
     var tr = table.insertRow(-1); // TABLE ROW.
@@ -116,10 +117,10 @@ function CreateTableFromJSON(newJson, col, type) {
         for (var j = 0; j < col.length; j++) {
             var tabCell = tr.insertCell(-1);
             if (j == col.length - 1) {
-                var intext =  i + ", " + type;
+                var intext = i + ", " + type;
                 tabCell.innerHTML = "<button onclick='editRow(" + intext + ")' class='editbtn'>edit</button>"
             } else if (j == col.length - 2) {
-                var intext =  newJson[i][0] + ", " + type;
+                var intext = newJson[i][0] + ", " + type;
                 tabCell.innerHTML = "<button onclick='delRow(" + intext + ")'class='delbtn'>delete</button>"
             } else {
                 tabCell.innerHTML = newJson[i][j];
@@ -128,6 +129,7 @@ function CreateTableFromJSON(newJson, col, type) {
     }
     // TODO: create edit section
     // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+    $("#showData").empty();
     var divContainer = document.getElementById("showData");
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
@@ -137,25 +139,62 @@ function AddressTable() {
     CreateTableFromJSON(address, addressColumns, 1);
 }
 
+function BillingInfoTable() {
+    CreateTableFromJSON(billinginformation, billinginformationColumns, 2);
+}
+
+function CartTable() {
+    CreateTableFromJSON(cart, cartColumns, 3);
+}
+
+function CartedProductTable() {
+    CreateTableFromJSON(cartedproduct, cartedproductColumns, 4);
+}
+
+function CustomerTable() {
+    CreateTableFromJSON(customer, customerColumns, 5);
+}
+
+function NewOrderTable() {
+    CreateTableFromJSON(neworder, neworderColumns, 6);
+}
+
+function ProductTable() {
+    CreateTableFromJSON(product, productColumns, 7);
+}
+
+function StaffTable() {
+    CreateTableFromJSON(staff, staffColumns, 8);
+}
+
+function WholesalerTable() {
+    CreateTableFromJSON(wholesaler, wholesalerColumns, 9);
+}
+//#endregion
 function editRow(id, type) {
     //add modal here
     $("#editDialog").empty()
     $("#editDialog").append("<form id='editForm'>")
-    if(indexes[type] == "address"){
-        var t = 0;
-         address[id].forEach(element => {
-            if(t != 0){
-                $("#editForm").append("<label>"+addressColumns[t]+"</label>")
-                $("#editForm").append("<input value='"+element+"'name='"+addressColumns[t]+"'type='text'>")
-            }
-            t++;
-         });
-    }
+    items = ["", address, billinginformation, cart, cartedproduct, customer, neworder, product, staff, wholesaler];
+    columns = ["", addressColumns, billinginformationColumns, cartColumns, cartedproductColumns, customerColumns, neworderColumns, productColumns, staffColumns, wholesalerColumns]
+    var t = 0;
+    items[type][id].forEach(element => {
+        if (t != 0) {
+            $("#editForm").append("<label>" + columns[type][t] + "</label>")
+            $("#editForm").append("<input value='" + element + "'name='" + columns[type][t] + "'type='text'>")
+        }
+        t++;
+    });
+
     $("#editDialog").append("</form>");
-    $("#editDialog").append("<input type='button' onclick='putRow("+id+","+type+")' value='Submit'>");
-    $("#editDialog").dialog();
-    
+    $("#editDialog").append("<input type='button' onclick='putRow(" + id + "," + type + ")' value='Submit'>");
+    $("#editDialog").dialog({
+        width: 250,
+        height: 420
+    });
+
 }
+
 function putRow(id, type) {
     var newdata = $('#editForm').serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
@@ -185,25 +224,31 @@ function delRow(id, type) {
     });
 }
 
-function addRow(type){
+function addRow(type) {
+    items = ["", address, billinginformation, cart, cartedproduct, customer, neworder, product, staff, wholesaler];
+    columns = ["", addressColumns, billinginformationColumns, cartColumns, cartedproductColumns, customerColumns, neworderColumns, productColumns, staffColumns, wholesalerColumns]
     $('#addDialog').empty();
     $("#addDialog").append("<form id='addForm'>");
-    if(indexes[type] == "address"){
-        addressColumns.forEach(element => {
-        if(element != "ID"){
-            if (element != "Edit"){
-                if (element != "Delete"){
-                    $("#addForm").append("<label>"+element+"</label>");
-                    $("#addForm").append("<input name='"+element+"' value='' type='text'>");
+    var i = 0;
+    columns[type].forEach(element => {
+        if (i != 0) {
+            if (element != "Edit") {
+                if (element != "Delete") {
+                    $("#addForm").append("<label>" + element + "</label>");
+                    $("#addForm").append("<input name='" + element + "' value='' type='text'>");
                 }
             }
         }
-        })
-        
-    }
-    $("#addDialog").append("<input type='button' onclick='postRow("+type+")' value='Submit'>")
+        i = 1;
+    })
+
+
+    $("#addDialog").append("<input type='button' onclick='postRow(" + type + ")' value='Submit'>")
     $("#addDialog").css("visibility", "visible");
-    $("#addDialog").dialog();
+    $("#addDialog").dialog({
+        width: 250,
+        height: 420
+    });
 }
 
 
@@ -213,13 +258,17 @@ function addRow(type){
 //     $("#addDialog").dialog();
 // }
 function postRow(type) {
+    items = ["", address, billinginformation, cart, cartedproduct, customer, neworder, product, staff, wholesaler];
+    columns = ["", addressColumns, billinginformationColumns, cartColumns, cartedproductColumns, customerColumns, neworderColumns, productColumns, staffColumns, wholesalerColumns]
+
     var newdata = $('#addForm').serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
         return obj;
     }, {});
-    if(indexes[type]=="address"){
-        newdata.id = (address[address.length - 1][0] + 1);
-    }
+    if (items[type].length != 0)
+        newdata.id = (items[type][items[type].length - 1][0] + 1);
+    else
+        newdata.id = 0;
     newdata = JSON.stringify(newdata);
     $.ajax({
         url: '/api/' + indexes[type],
@@ -232,6 +281,5 @@ function postRow(type) {
     });
 
     $('#addDialog').dialog('close');
-    
-}
 
+}

@@ -5,19 +5,30 @@
 
 <body>
     <div id="showData"></div>
-    <input type="button" onclick="addRow(1)" value="Add Address" />
-    <input type="button" onclick="AddressTable()" value="Show Address Table" />
-    <input type="button" onclick="AddressTable()" value="Show BillingInfo Table" />
-    <input type="button" onclick="AddressTable()" value="Show Cart Table" />
-    <input type="button" onclick="AddressTable()" value="Show Cartedproduct Table" />
-    <input type="button" onclick="AddressTable()" value="Show Customer Table" />
-    <input type="button" onclick="AddressTable()" value="Show Neworder Table" />
-    <input type="button" onclick="AddressTable()" value="Show Product Table" />
-    <input type="button" onclick="AddressTable()" value="Show Staff Table" />
-    <input type="button" onclick="AddressTable()" value="Show wholesaler Table" />
+    <div>
+        <input type="button" onclick="getstuff()" value="update info" /><br>
+        <input type="button" onclick="AddressTable()" value="Show Address Table" />
+        <input type="button" onclick="addRow(1)" value="Add Address" /><br>
+        <input type="button" onclick="BillingInfoTable()" value="Show BillingInfo Table" />
+        <input type="button" onclick="addRow(2)" value="Add BillingInfo" /><br>
+        <input type="button" onclick="CartTable()" value="Show Cart Table" />
+        <input type="button" onclick="addRow(3)" value="Add Cart" /><br>
+        <input type="button" onclick="CartedProductTable()" value="Show Cartedproduct Table" />
+        <input type="button" onclick="addRow(4)" value="Add CartedProduct" /><br>
+        <input type="button" onclick="CustomerTable()" value="Show Customer Table" />
+        <input type="button" onclick="addRow(5)" value="Add Customer" /><br>
+        <input type="button" onclick="NewOrderTable()" value="Show Order Table" />
+        <input type="button" onclick="addRow(6)" value="Add NewOrder" /><br>
+        <input type="button" onclick="ProductTable()" value="Show Product Table" />
+        <input type="button" onclick="addRow(7)" value="Add Product" /><br>
+        <input type="button" onclick="StaffTable()" value="Show Staff Table" />
+        <input type="button" onclick="addRow(8)" value="Add Staff" /><br>
+        <input type="button" onclick="WholesalerTable()" value="Show wholesaler Table" />
+        <input type="button" onclick="addRow(9)" value="Add Wholesaler" /><br>
+    </div>
 </body>
 <div id="addDialog" title="Add" style="visibility:hidden">
-    
+
 </div>
 <div id="editDialog" title="Edit"></div>
 <div id="deleteDialog" title="Delete"></div>
