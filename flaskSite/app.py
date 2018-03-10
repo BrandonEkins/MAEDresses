@@ -1,6 +1,7 @@
 #/bin/python
 from flask import Flask, jsonify, Response, request, abort, render_template, send_from_directory
 import MySQLdb
+import auth
 def queryDB(nQuery):
     db = MySQLdb.connect(host="localhost",
                         user="root",
@@ -16,6 +17,7 @@ def queryDB(nQuery):
 app = Flask(__name__)
 
 @app.route('/')
+@auth.requires_auth
 def index():
     return render_template('index.html')
 task_id = ''
