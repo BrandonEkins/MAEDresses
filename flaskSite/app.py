@@ -138,6 +138,93 @@ def customerput(task_id):
         result = queryDB("DELETE FROM customer WHERE customerID = '"+ str(task_id) +"';")
         return jsonify(result), 201
 #endregion
+#region neworderApi
+@app.route('/api/neworder', methods=['GET', 'POST'])
+def neworderget():
+    if request.method == 'GET':
+        return jsonify(queryDB("SELECT * FROM neworder;"))
+    elif request.method == 'POST':
+        data = request.get_json(force=True)
+        query = "INSERT INTO neworder (`neworderID`,`CartID`, `StaffID`, `OrderDate`) VALUES ("+str(data['id'])+",'"+ data['CartID']+"','"+ data['StaffID']+"','"+ data['OrderDate']+"');"
+        result = queryDB(query)
+        return jsonify(result), 201
 
+@app.route('/api/neworder/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def neworderput(task_id):
+    if request.method == 'PUT':
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE neworder SET CartID='"+data['CartID']+"', StaffID='"+data['StaffID']+"', OrderDate='"+data['OrderDate']+"' WHERE neworderID= '"+str(task_id)+"';")
+        return jsonify(result), 201
+
+    elif request.method == 'DELETE':
+        result = queryDB("DELETE FROM neworder WHERE neworderID = '"+ str(task_id) +"';")
+        return jsonify(result), 201
+#endregion
+#region productApi
+@app.route('/api/product', methods=['GET', 'POST'])
+def productget():
+    if request.method == 'GET':
+        return jsonify(queryDB("SELECT * FROM product;"))
+    elif request.method == 'POST':
+        data = request.get_json(force=True)
+        query = "INSERT INTO product (`productID`,`ShippingCost`, `ProductName`, `Color`,`Price`,`WholesalerID`) VALUES ("+str(data['id'])+",'"+ data['ShippingCost']+"','"+ data['Color']+"','"+ data['ProductName']+"', '"+ data['Price']+"', '"+ data['WholesalerID']+"');"
+        result = queryDB(query)
+        return jsonify(result), 201
+
+@app.route('/api/product/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def productput(task_id):
+    if request.method == 'PUT':
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE product SET ShippingCost='"+data['ShippingCost']+"', ProductName='"+data['ProductName']+"', Color='"+data['Color']+"', Price='"+data['Price']+"', WholesalerID='"+data['WholesalerID']+"' WHERE productID= '"+str(task_id)+"';")
+        return jsonify(result), 201
+
+    elif request.method == 'DELETE':
+        result = queryDB("DELETE FROM product WHERE productID = '"+ str(task_id) +"';")
+        return jsonify(result), 201
+#endregion
+#region staffApi
+@app.route('/api/staff', methods=['GET', 'POST'])
+def staffget():
+    if request.method == 'GET':
+        return jsonify(queryDB("SELECT * FROM staff;"))
+    elif request.method == 'POST':
+        data = request.get_json(force=True)
+        query = "INSERT INTO staff (`staffID`,`StaffName`, `Email`, `Wage`, `sPassword`) VALUES ("+str(data['id'])+",'"+ data['StaffName']+"', '"+ data['Email']+"', '"+ data['Wage']+"', '"+ data['sPassword']+"');"
+        result = queryDB(query)
+        return jsonify(result), 201
+
+@app.route('/api/staff/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def staffput(task_id):
+    if request.method == 'PUT':
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE staff SET StaffName='"+data['StaffName']+"', Email='"+data['Email']+"', Wage='"+data['Wage']+"', sPassword='"+data['sPassword']+"' WHERE staffID= "+str(task_id)+";")
+        return jsonify(result), 201
+
+    elif request.method == 'DELETE':
+        result = queryDB("DELETE FROM staff WHERE staffID = '"+ str(task_id) +"';")
+        return jsonify(result), 201
+#endregion
+#region wholesalerApi
+@app.route('/api/wholesaler', methods=['GET', 'POST'])
+def wholesalerget():
+    if request.method == 'GET':
+        return jsonify(queryDB("SELECT * FROM wholesaler;"))
+    elif request.method == 'POST':
+        data = request.get_json(force=True)
+        query = "INSERT INTO wholesaler (`wholesalerID`,`Website`, `WholesalerName`, `WholesalerPhone`, `WholesalerLocation`) VALUES ("+str(data['id'])+",'"+ data['Website']+"', '"+ data['WholesalerName']+"', '"+ data['WholesalerPhone']+"', '"+ data['WholesalerLocation']+"');"
+        result = queryDB(query)
+        return jsonify(result), 201
+
+@app.route('/api/wholesaler/<int:task_id>', methods=[ 'PUT', 'DELETE'])
+def wholesalerput(task_id):
+    if request.method == 'PUT':
+        data = request.get_json(force=True)
+        result = queryDB("UPDATE wholesaler SET Website='"+data['Website']+"', WholesalerName='"+data['WholesalerName']+"', WholesalerPhone='"+data['WholesalerPhone']+"', WholesalerLocation='"+data['WholesalerLocation']+"' WHERE wholesalerID= "+str(task_id)+";")
+        return jsonify(result), 201
+
+    elif request.method == 'DELETE':
+        result = queryDB("DELETE FROM wholesaler WHERE WholesalerID = '"+ str(task_id) +"';")
+        return jsonify(result), 201
+#endregion
 if __name__ == '__main__':
     app.run(debug=True)
