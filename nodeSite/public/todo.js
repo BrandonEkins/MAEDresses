@@ -1,7 +1,21 @@
 angular.module('cartApp', ['ngMaterial', 'ngMessages'])
     .controller('cartController', function ($mdDialog, $http) {
         var cart = this;
+        // Simple GET request example:
+        cart.products = [];
+        cart.getapi = function () {
+            $http({
+                method: 'GET',
+                url: '/api/getProducts'
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                cart.products = JSON.parse(JSON.stringify(response.data));
+            }, function errorCallback(response) {
 
+            });
+
+        }
+        cart.getapi();
         cart.showLogonDialog = function (ev) {
             $mdDialog.show({
                 contentElement: '#myDialog',
