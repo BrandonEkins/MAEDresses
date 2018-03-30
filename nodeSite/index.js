@@ -158,9 +158,9 @@ app.post('/login', function (request, res) {
                 maxAge: 900000,
                 httpOnly: true
             });
-            var user = { "rand": randomNumber, "CustomerID": results[0].CustomerID }
+            var user = { "rand": randomNumber, "CustomerID": results[0].CustomerID,"name":results[0].cName}
             database.mongoAdd(user);
-            res.sendStatus(200);
+            res.send(JSON.stringify(results[0].cName));
         }
     });
     console.log('logging in');
@@ -168,9 +168,8 @@ app.post('/login', function (request, res) {
 })
 app.get('/logout', function (req, res) {
     var cookie = req.cookies.cookieName;
-    res.clearCookie('loginToken');
     database.mongoDelete(cookie);
-    res.redirect('/');
+    res.clearCookie('loginToken');
 })
 var server = app.listen(8000, function () {
     var host = server.address().address

@@ -8,7 +8,7 @@
 <body ng-controller="cartController as cart">
     <ul>
         <li>
-            <md-button class="md-primary md-raised" href="/logout">
+            <md-button class="md-primary md-raised" ng-click="cart.logout($even)">
                 Logout
             </md-button>
         </li>
@@ -17,6 +17,9 @@
                 Login
             </md-button>
         </li>
+        <li>
+            Welcome {{cart.user[0].cName}}
+        </li>
     </ul>
     <!-- Angular Material requires Angular.js Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -24,6 +27,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-messages.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
+    <scrpit src="https://ajax.googleapis.com/ajax/libs/angularjs/X.Y.Z/angular-cookies.js"></scrpit>
     <!-- Angular Material Library -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.js"></script>
     <script src="todo.js"></script>
@@ -58,7 +62,9 @@
                 <td>{{ product.Color }}</td>
                 <td>{{ product.ShippingCost }}</td>
                 <td>{{ product.Price }}</td>
-                <td><md-button class="md-primary md-raised" ng-click="cart.addProduct($index)">Add To Cart</md-button></td>
+                <td>
+                    <md-button class="md-primary md-raised" ng-click="cart.addProduct($index)">Add To Cart</md-button>
+                </td>
             </tr>
         </table>
     </div>
@@ -74,17 +80,12 @@
                 <td>{{ product.ProductName }}</td>
                 <td>{{ product.ShippingCost }}</td>
                 <td>{{ product.Price }}</td>
-                <td><md-button class="md-primary md-raised" ng-click="cart.removeProduct($index)">Remove From Cart</md-button></td>
+                <td>
+                    <md-button class="md-primary md-raised" ng-click="cart.removeProduct($index)">Remove From Cart</md-button>
+                </td>
             </tr>
         </table>
     </div>
-    Total:
-    <div>
-        <h3>Contact Info</h3>
-        {{cart.BillingInformation}}
-        <md-button class="md-primary md-raised" ng-click="cart.EditBilling($index)">Edit/Add</md-button>
-    </div>
-    <md-button class="md-primary md-raised" ng-click="cart.ship($index)">Ship!</md-button>
 </body>
 
 </html>

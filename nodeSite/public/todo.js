@@ -1,8 +1,10 @@
 angular.module('cartApp', ['ngMaterial', 'ngMessages','ngRoute'])
-    .controller('cartController', function ($window, $mdDialog, $http, $route) {
+    .controller('cartController', function ($window, $mdDialog, $http, $route,) {
         var cart = this;
         // Simple GET request example:
         cart.products = [];
+        cart.name = "";
+        cart.works = "";
         cart.getapi = function () {
             $http({
                 method: 'GET',
@@ -20,7 +22,7 @@ angular.module('cartApp', ['ngMaterial', 'ngMessages','ngRoute'])
                 console.log(response.data);
                 cart.user = JSON.parse(JSON.stringify(response.data));
             }, function errorCallback(response) {
-
+                
             });
             $http({
                 method: 'GET',
@@ -50,11 +52,23 @@ angular.module('cartApp', ['ngMaterial', 'ngMessages','ngRoute'])
                 data: cart.user
             }).then(function (response) { 
                 location.reload();
-                console.log("success") // assign  $scope.persons here as promise is resolved here 
+                cart.name = response.data;
+                
             }),function (error) {
                 console.log("failed")
             };
             
+        }
+        cart.logout = function(ev) {
+            $http({
+                url: 'logout',
+                method: "GET",
+            }).then(function (response) { 
+                location.reload();
+                cart.user = "";
+            }),function (error) {
+                console.log("failed")
+            };
         }
         cart.addProduct = function(id) {
             
