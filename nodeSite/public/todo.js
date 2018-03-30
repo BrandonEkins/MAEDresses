@@ -1,5 +1,5 @@
-angular.module('cartApp', ['ngMaterial', 'ngMessages'])
-    .controller('cartController', function ($mdDialog, $http) {
+angular.module('cartApp', ['ngMaterial', 'ngMessages','ngRoute'])
+    .controller('cartController', function ($window, $mdDialog, $http, $route) {
         var cart = this;
         // Simple GET request example:
         cart.products = [];
@@ -13,6 +13,25 @@ angular.module('cartApp', ['ngMaterial', 'ngMessages'])
             }, function errorCallback(response) {
 
             });
+            $http({
+                method: 'GET',
+                url: '/api/getUser'
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                cart.user = JSON.parse(JSON.stringify(response.data));
+            }, function errorCallback(response) {
+
+            });
+            $http({
+                method: 'GET',
+                url: '/api/getCart'
+            }).then(function successCallback(response) {
+                console.log(response.data);
+                cart.cart = JSON.parse(JSON.stringify(response.data));
+            }, function errorCallback(response) {
+
+            });
+            
 
         }
         cart.getapi();
@@ -25,18 +44,45 @@ angular.module('cartApp', ['ngMaterial', 'ngMessages'])
             });
         };
         cart.closeLogonDialog = function (ev) {
-            console.log(cart.user.password);
-            console.log(cart.user.email);
             $http({
                 url: '/login',
                 method: "POST",
                 data: cart.user
-            }).success(function (data, status, headers, config) {
+            }).then(function (response) { 
+                location.reload();
                 console.log("success") // assign  $scope.persons here as promise is resolved here 
-            }).error(function (data, status, headers, config) {
+            }),function (error) {
                 console.log("failed")
-            });
-            $mdDialog.hide();
+            };
+            
+        }
+        cart.addProduct = function(id) {
+            
+            $http({
+                url: '/api/addCart',
+                method: "POST",
+                data: {"ProductID": cart.products[id].ProductID}
+            }).then(function (response) { 
+                console.log("success") // assign  $scope.persons here as promise is resolved here 
+                $route.reload();
+            }),function (error) {
+                console.log("failed")
+            };
+
+        }
+        cart.removeProduct = function(id) {
+            $http({
+                url: '/api/removeCart',
+                method: "POST",
+                data: {"CartedProductID":cart.cart[0].CartedProductID}
+            }).then(function (response) { 
+                console.log("success") // assign  $scope.persons here as promise is resolved here 
+                $route.reload();
+                $window.location.reload();
+                location.reload();
+            }),function (error) {
+                console.log("failed")
+            };
         }
 
     })

@@ -23,7 +23,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-messages.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
     <!-- Angular Material Library -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.8/angular-material.min.js"></script>
     <script src="todo.js"></script>
@@ -54,8 +54,8 @@
                 <th>price</th>
             </tr>
             <tr ng-repeat="product in cart.products track by $index">
-                <td>{{ product.Color }}</td>
                 <td>{{ product.ProductName }}</td>
+                <td>{{ product.Color }}</td>
                 <td>{{ product.ShippingCost }}</td>
                 <td>{{ product.Price }}</td>
                 <td><md-button class="md-primary md-raised" ng-click="cart.addProduct($index)">Add To Cart</md-button></td>
@@ -67,12 +67,10 @@
         <table>
             <tr>
                 <th>Name</th>
-                <th>color</th>
                 <th>Shipping</th>
                 <th>price</th>
             </tr>
-            <tr ng-repeat="product in cart.itemsInCart">
-                <td>{{ product.Color }}</td>
+            <tr ng-repeat="product in cart.cart">
                 <td>{{ product.ProductName }}</td>
                 <td>{{ product.ShippingCost }}</td>
                 <td>{{ product.Price }}</td>
