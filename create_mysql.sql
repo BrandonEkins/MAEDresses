@@ -79,3 +79,26 @@ CREATE TABLE NewOrder(
     FOREIGN KEY (CartID) REFERENCES Cart(CartID),
     FOREIGN KEY (StaffID) REFERENCES Staff(StaffID)
 );
+
+CREATE VIEW CartView AS 
+SELECT Cart.CartID,
+Product.ProductName, 
+Product.Price,
+Product.ShippingCost, 
+Wholesaler.WholesalerName,
+Cart.TotalCost,
+Cart.ShippingCost TotalShippingCost,
+Cart.NumberOfItems,
+Customer.CustomerID,
+CartedProduct.CartedProductID
+FROM Cart 
+INNER JOIN CartedProduct ON Cart.CartID = CartedProduct.CartID
+INNER JOIN Product ON Product.ProductID = CartedProduct.ProductID
+INNER JOIN Wholesaler ON Wholesaler.WholesalerID = Product.WholesalerID
+INNER JOIN Customer ON Customer.CustomerID = Cart.CustomerID;
+
+CREATE TRIGGER productsum BEFORE INSERT ON product
+       FOR EACH ROW SET @sum = @sum + NEW.Price;
+
+
+
